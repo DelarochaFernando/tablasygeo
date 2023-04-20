@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">tablasygeo</string>
+
+    <!--PERMISOS-->
+    <string name="permission_request_text1">
+        Los Siguientes permisos son muy importantes para el funcionamiento correcto de la app.
+    </string>
+    <string name="permission_request_text2">Permiso de Internet</string>
+    <string name="permission_request_text3">
+        Este permiso otorga el acceso a información importante para la aplicación
+        alojada en la nube.
+    </string>
+    <string name="permission_request_text4">Permiso de Ubicación</string>
+    <string name="permission_request_text5">
+        Este permiso otorga el acceso a información acorde a la ubicación del dispositivo.
+    </string>
+    <string name="permission_request_text6">Permitir</string>
+
 </resources>

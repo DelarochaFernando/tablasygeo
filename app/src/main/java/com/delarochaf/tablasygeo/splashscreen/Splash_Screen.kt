@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -25,6 +26,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.delarochaf.tablasygeo.R
 import com.delarochaf.tablasygeo.ui.theme.TablasygeoTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.delay
 
 @Composable
@@ -71,6 +75,7 @@ fun simpleSplashScreen(){
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PermissionRequestScreen(){
     val imgInternetPermission : Painter = painterResource(id = R.drawable.ic_internet_permission_light)
@@ -86,7 +91,7 @@ fun PermissionRequestScreen(){
             Text(text = "Los Siguientes permisos son muy importantes para el funcionamiento" +
                     " correcto de la app.", modifier = Modifier.padding(16.dp))
         }
-        Row(modifier = Modifier
+        /*Row(modifier = Modifier
             .fillMaxWidth()
             .padding(0.dp, 12.dp),
             horizontalArrangement = Arrangement.Center,
@@ -106,7 +111,7 @@ fun PermissionRequestScreen(){
                     .align(Alignment.CenterVertically)
                     .padding(20.dp, 0.dp)
             )
-        }
+        }*/
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
@@ -128,7 +133,20 @@ fun PermissionRequestScreen(){
             .padding(0.dp, 12.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            Button(onClick = {},
+
+            val permissionsState = rememberMultiplePermissionsState(
+                listOf(
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                )
+            )
+            MultiplePermissionsRequired(
+                multiplePermissionsState = permissionsState,
+                permissionGranted = {},
+                permissionNotGranted = {}
+            )
+
+            Button(onClick = {permissionsState.launchMultiplePermissionRequest()},
 
                 ) {
                 Icon(imageVector = Icons.Filled.Check, contentDescription = null)
@@ -144,11 +162,13 @@ fun PermissionRequestScreen(){
 }
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun PermissionRequestScreenPreview(){
     val imgInternetPermission : Painter = painterResource(id = R.drawable.ic_internet_permission_light)
     val imgLocationPermission : Painter = painterResource(id = R.drawable.ic_location_permission_light)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -157,56 +177,80 @@ fun PermissionRequestScreenPreview(){
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Text(text = "Los Siguientes permisos son muy importantes para el funcionamiento" +
-                    " correcto de la app.", modifier = Modifier.padding(16.dp))
+            Text(text = stringResource(id = R.string.permission_request_text1),
+                modifier = Modifier.padding(16.dp)
+            )
         }
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(0.dp, 12.dp),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Image(
-                painter = imgInternetPermission,
-                contentDescription = "internet permission",
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
+        /*Column(modifier = Modifier.fillMaxWidth()) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp, 4.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Image(
+                    painter = imgInternetPermission,
+                    contentDescription = "internet permission",
+                    modifier = Modifier
+                        .width(50.dp)
+                        .height(50.dp)
 
+                )
+                Text(
+                    text = stringResource(id = R.string.permission_request_text2),
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(20.dp, 0.dp)
+                )
+            }
+            Text(text = stringResource(id = R.string.permission_request_text3),
+                modifier = Modifier.padding(16.dp,0.dp),
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp
             )
-            Text(
-                text = "Internet Permission",
-                fontSize = 20.sp,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(20.dp, 0.dp)
+        }*/
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp, 4.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = imgLocationPermission,
+                    contentDescription = stringResource(id = R.string.permission_request_text4),
+                    modifier = Modifier
+                        .width(50.dp)
+                        .height(50.dp)
+                )
+                Text(text = stringResource(id = R.string.permission_request_text4),
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(20.dp, 0.dp)
+                )
+            }
+            Text(text = stringResource(id = R.string.permission_request_text5),
+                modifier = Modifier.padding(16.dp,0.dp),
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp
             )
         }
-        Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Image(
-                painter = imgLocationPermission,
-                contentDescription = "internet permission",
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
-            )
-            Text(text = "Location Permission",fontSize = 20.sp,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(20.dp, 0.dp)
-            )
-        }
+
+
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(0.dp, 12.dp),
             horizontalArrangement = Arrangement.Center
         ) {
+
             Button(onClick = {},
 
             ) {
-                Icon(imageVector = Icons.Filled.Check, contentDescription = null)
-                Text(text = "Permitir",
+                Icon(imageVector = Icons.Filled.Check,
+                    contentDescription = stringResource(id = R.string.permission_request_text6)
+                )
+                Text(text = stringResource(id = R.string.permission_request_text6),
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .padding(8.dp, 0.dp)
@@ -215,4 +259,19 @@ fun PermissionRequestScreenPreview(){
 
         }
     }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun MultiplePermissionsRequired(
+    multiplePermissionsState: MultiplePermissionsState,
+    permissionNotGranted : () -> Unit,
+    permissionGranted: () -> Unit
+){
+    if(multiplePermissionsState.allPermissionsGranted){
+        permissionGranted.invoke()
+    }else{
+        permissionNotGranted.invoke()
+    }
+
 }
