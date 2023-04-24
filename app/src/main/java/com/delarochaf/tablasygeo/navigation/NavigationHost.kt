@@ -10,7 +10,6 @@ import com.delarochaf.tablasygeo.splashscreen.Splash_Screen
 
 @Composable
 fun NavigationHost(navController:NavController){
-
     NavHost(navController = navController as NavHostController,
     startDestination = "splashScreen"){
         composable("splashScreen"){

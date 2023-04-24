@@ -80,6 +80,7 @@ fun simpleSplashScreen(){
 fun PermissionRequestScreen(){
     val imgInternetPermission : Painter = painterResource(id = R.drawable.ic_internet_permission_light)
     val imgLocationPermission : Painter = painterResource(id = R.drawable.ic_location_permission_light)
+    var isPermissionGranted by rememberSaveable() { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -142,8 +143,7 @@ fun PermissionRequestScreen(){
             )
             MultiplePermissionsRequired(
                 multiplePermissionsState = permissionsState,
-                permissionGranted = {},
-                permissionNotGranted = {}
+                permissionGranted = {isPermissionGranted = it},
             )
 
             Button(onClick = {permissionsState.launchMultiplePermissionRequest()},
@@ -265,13 +265,11 @@ fun PermissionRequestScreenPreview(){
 @Composable
 fun MultiplePermissionsRequired(
     multiplePermissionsState: MultiplePermissionsState,
-    permissionNotGranted : () -> Unit,
-    permissionGranted: () -> Unit
+    permissionGranted: (Boolean) -> Unit
 ){
     if(multiplePermissionsState.allPermissionsGranted){
-        permissionGranted.invoke()
+        permissionGranted(true)
     }else{
-        permissionNotGranted.invoke()
+        permissionGranted(false)
     }
-
 }
