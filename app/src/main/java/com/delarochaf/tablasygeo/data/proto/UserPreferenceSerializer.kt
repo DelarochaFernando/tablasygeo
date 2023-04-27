@@ -1,4 +1,4 @@
-package com.delarochaf.tablasygeo.data
+package com.delarochaf.tablasygeo.data.proto
 
 import androidx.datastore.core.Serializer
 import java.io.InputStream
@@ -6,6 +6,7 @@ import java.io.OutputStream
 
 //ProtoDatastore tutorial
 //https://medium.com/tech-takeaways/how-to-use-androids-proto-datastore-with-kotlin-support-8e4f80f1d6d
+
 
 object UserPreferenceSerializer : Serializer<UserPreferences>{
     override val defaultValue: UserPreferences
