@@ -46,6 +46,14 @@ android {
         }
     }
 
+    sourceSets {
+        main{
+            proto{
+                srcDir 'com/delarochaf/tablasygeo/app/src/main/proto'
+            }
+        }
+    }
+
     protobuf{
         protoc{
             artifact = "com.google.protobuf:protoc:3.20.1"
@@ -60,6 +68,10 @@ android {
                     kotlin {
                         option 'lite'
                     }
+                }
+
+                task.plugins{
+                    javanano {}
                 }
             }
         }
