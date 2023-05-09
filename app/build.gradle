@@ -70,6 +70,7 @@ dependencies {
     //Permissions API
     implementation "com.google.accompanist:accompanist-permissions:0.31.0-alpha"
     //implementation 'androidx.core:core-ktx:+'
+    //implementation 'androidx.core:core-ktx:+'
 
     //Proto DataStore
 //    implementation  "androidx.datastore:datastore-preferences:1.0.0"
