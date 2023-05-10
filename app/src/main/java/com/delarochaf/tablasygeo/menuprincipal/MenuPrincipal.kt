@@ -2,6 +2,7 @@ package com.delarochaf.tablasygeo.menuprincipal
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.ui.Alignment
@@ -28,6 +30,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -37,25 +40,42 @@ import com.delarochaf.tablasygeo.ui.theme.TablasygeoTheme
 @Composable
 fun MenuPrincipal(navController: NavController){
     TablasygeoTheme() {
-        //MenuJuego(navController)
+        MenuJuego(navController)
     }
 }
 
 //@Preview(showBackground = true)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuJuego(){
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(color = colorResource(id = R.color.teal_200))) {
+fun MenuJuego(navController: NavController){
+    val geoImg = painterResource(id = R.drawable.menu_geography_kids_logo1)
+    val mathImg = painterResource(id = R.drawable.menu_math_kids_logo1)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = colorResource(id = R.color.green_chalkboard))
+    ) {
         Text(
-            text = "Elige el tipo de juego en que quieras participar:",
+            text = "Juegos",
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp, 16.dp),
-            color = Color.White
+                .align(Alignment.CenterHorizontally)
+                .padding(12.dp, 100.dp),
+            color = Color.White,
+            fontSize = 40.sp
         )
-        Spacer(modifier = Modifier.padding(0.dp,25.dp))
+        CardGameOptionHorizontal(
+            navController = navController,
+            category = "Matemáticas",
+            painterRes = mathImg,
+            routeText = "mathScreenMenu"
+        )
 
+        CardGameOptionHorizontal(
+            navController = navController,
+            category = "Geografía",
+            painterRes = geoImg,
+            routeText = "geographyScreen"
+        )
     }
 
 }
@@ -64,18 +84,25 @@ fun MenuJuego(){
 @OptIn(ExperimentalMaterial3Api::class)
 //@Preview(showBackground = true)
 @Composable
-fun CardGameOption(navController: NavController,text:String){
+fun CardGameOptionHorizontal(
+    navController: NavController,
+    category: String,
+    painterRes: Painter,
+    routeText : String
+){
     Card(
         shape = RoundedCornerShape(CornerSize(4.dp)),
-        onClick = {navController}
+        onClick = {navController.navigate(routeText) }
 
     ) {
-        Row(modifier = Modifier.fillMaxWidth().padding(45.dp)){
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(45.dp)){
             Spacer(modifier = Modifier.padding(4.dp))
             Image(
-                painter= painterResource(id = R.drawable.ic_geography_light),
-                contentDescription = "logo Tablas",
-                contentScale = ContentScale.Fit,
+                painter= painterRes,
+                contentDescription = category,
+                contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .size(65.dp)
@@ -83,11 +110,56 @@ fun CardGameOption(navController: NavController,text:String){
             )
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
-                text = text,
+                text = category,
                 fontSize = 50.sp,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
         }
     }
+}
+
+
+
+@ExperimentalMaterial3Api
+//@Preview(showBackground = true)
+@Composable
+fun CardGameOptionVertical(
+    navController: NavController,
+    category: String,
+    painterRes: Painter,
+    routeText : String
+){
+    OutlinedCard(
+        shape = RoundedCornerShape(CornerSize(12.dp)),
+        onClick = {
+            navController.navigate(routeText)
+        }
+    ) {
+        Column(verticalArrangement = Arrangement.SpaceEvenly) {
+            Row(modifier = Modifier
+                .padding(0.dp, 32.dp, 0.dp, 0.dp)
+                .fillMaxWidth()){
+                Image(
+                    painter= painterRes,
+                    contentDescription = category,
+                    contentScale = ContentScale.FillHeight,
+                    modifier = Modifier.size(405.dp,200.dp)
+                )
+            }
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp, 15.dp, 0.dp, 32.dp)
+            ){
+                Text(
+                    text = category,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally),
+                    fontSize = 55.sp
+                )
+            }
+        }
+
+    }
+
 }
 
