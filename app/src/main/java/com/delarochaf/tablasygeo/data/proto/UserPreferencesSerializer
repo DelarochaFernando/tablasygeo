@@ -1,0 +1,3 @@
+object UserPreferencesSerializer : Serializer<UserPreferences>{
+
+}

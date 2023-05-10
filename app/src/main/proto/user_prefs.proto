@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-option java_package = "com.delarocha.tablasygeo.app.src.main.proto";
-option java_multiple_files = true;
-
-message UserPreferences {
-  bool permissionsGranted = 1;
-}
