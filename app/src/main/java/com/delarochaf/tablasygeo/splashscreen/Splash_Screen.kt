@@ -34,18 +34,18 @@ import kotlinx.coroutines.delay
 @Composable
 fun Splash_Screen(navController : NavController){
     TablasygeoTheme() {
-        simpleSplashScreen()
+        simpleSplashScreen(navController)
     }
 }
 
 //@Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun splashScreenPreview(){
-    simpleSplashScreen()
+    //simpleSplashScreen(navController = nav)
 }
 
 @Composable
-fun simpleSplashScreen(){
+fun simpleSplashScreen(navController: NavController){
     var showPermissionsReqScreen by rememberSaveable{ mutableStateOf(false)}
     var showSplashScreen by rememberSaveable { mutableStateOf(true)}
 
@@ -69,7 +69,11 @@ fun simpleSplashScreen(){
                     .height(150.dp)
             )
         }else{
-            PermissionRequestScreen()
+            PermissionRequestScreen(permissionGranted = {
+                if(it){
+                    navController.navigate("menuprincipal")
+                }
+            })
         }
 
     }
@@ -77,7 +81,7 @@ fun simpleSplashScreen(){
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionRequestScreen(){
+fun PermissionRequestScreen(permissionGranted: (Boolean) -> Unit){
     val imgInternetPermission : Painter = painterResource(id = R.drawable.ic_internet_permission_light)
     val imgLocationPermission : Painter = painterResource(id = R.drawable.ic_location_permission_light)
     var isPermissionGranted by rememberSaveable() { mutableStateOf(false) }
@@ -143,8 +147,9 @@ fun PermissionRequestScreen(){
             )
             MultiplePermissionsRequired(
                 multiplePermissionsState = permissionsState,
-                permissionGranted = {isPermissionGranted = it},
-            )
+            ) {
+                permissionGranted(it)
+            }
 
             Button(onClick = {permissionsState.launchMultiplePermissionRequest()},
 
