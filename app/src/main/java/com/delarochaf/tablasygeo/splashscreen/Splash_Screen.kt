@@ -49,10 +49,13 @@ fun simpleSplashScreen(navController: NavController){
     var showPermissionsReqScreen by rememberSaveable{ mutableStateOf(false)}
     var showSplashScreen by rememberSaveable { mutableStateOf(true)}
 
-    LaunchedEffect(showSplashScreen){
-        delay(3500)
-        showPermissionsReqScreen = true
+    if(!showPermissionsReqScreen){
+        LaunchedEffect(showSplashScreen){
+            delay(3500)
+            showPermissionsReqScreen = true
+        }
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,21 +64,21 @@ fun simpleSplashScreen(navController: NavController){
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val imgresource : Painter = painterResource(id = R.drawable.logotabygeotemporal)
-        if(!showPermissionsReqScreen){
-            Image(
-                painter = imgresource, contentDescription = "LogoApp",
-                modifier = Modifier
-                    .width(150.dp)
-                    .height(150.dp)
-            )
-        }else{
-            PermissionRequestScreen(permissionGranted = {
-                if(it){
-                    navController.navigate("menuprincipal")
-                }
-            })
-        }
 
+            if(!showPermissionsReqScreen){
+                Image(
+                    painter = imgresource, contentDescription = "LogoApp",
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(150.dp)
+                )
+            }else{
+                PermissionRequestScreen(permissionGranted = {
+                    if(it){
+                        navController.navigate("menuprincipal")
+                    }
+                })
+            }
     }
 }
 
