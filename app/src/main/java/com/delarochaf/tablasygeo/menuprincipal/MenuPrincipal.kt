@@ -30,6 +30,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.currentCompositionLocalContext
@@ -56,18 +57,19 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.NavController
 import com.delarochaf.tablasygeo.R
 import com.delarochaf.tablasygeo.ui.theme.TablasygeoTheme
+import com.delarochaf.tablasygeo.windowsize.WindowSize
 
 @Composable
-fun MenuPrincipal(navController: NavController){
+fun MenuPrincipal(navController: NavController, windowSize: WindowSize){
     TablasygeoTheme() {
-        MenuJuego(navController)
+        MenuJuego(navController,windowSize)
     }
 }
 
 //@Preview(showBackground = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuJuego(navController: NavController){
+fun MenuJuego(navController: NavController, windowSize: WindowSize){
     val geoImg = painterResource(id = R.drawable.menu_geography_kids_logo1)
     val mathImg = painterResource(id = R.drawable.menu_math_kids_logo1)
     Column(
@@ -79,7 +81,7 @@ fun MenuJuego(navController: NavController){
             text = "Juegos",
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(12.dp, 100.dp),
+                .padding(12.dp, 40.dp),
             color = Color.White,
             fontSize = 40.sp
         )
@@ -96,13 +98,52 @@ fun MenuJuego(navController: NavController){
             painterRes = geoImg,
             routeText = "geographyScreen"
         )*/
-        CardWithImageAndText(imageResId = R.drawable.menu_math_kids_logo1, title = "Matemáticas", description = "math")
-        Spacer(modifier = Modifier.height(24.dp))
-        CardWithImageAndText(imageResId = R.drawable.menu_geography_kids_logo1, title = "Geografía", description = "geo")
+        when(windowSize){
+            WindowSize.Compact ->
+            CardsForCompactWidthDevice()
+            WindowSize.Medium ->
+            CardsForMediumWidthDevice()
+            WindowSize.Expanded ->
+                CardWithImageAndTextExpanded(
+                    imageResId = R.drawable.menu_math_kids_logo1,
+                    title = "Matemáticas",
+                    description = "math",windowSize
+                )
+        }
     }
 
     val activity = LocalContext.current as Activity
     activity.window.statusBarColor = LocalContext.current.resources.getColor(R.color.green_chalkboard)
+}
+
+@Composable
+fun CardsForCompactWidthDevice(){
+    CardWithImageAndTextCompact(
+        imageResId = R.drawable.menu_math_kids_logo1,
+        title = "Matemáticas",
+        description = "math"
+    )
+    Spacer(modifier = Modifier.height(24.dp))
+    CardWithImageAndTextCompact(
+        imageResId = R.drawable.menu_geography_kids_logo1,
+        title = "Geografía",
+        description = "geo"
+    )
+}
+
+@Composable
+fun CardsForMediumWidthDevice(){
+    CardWithImageAndTextMedium(
+        imageResId = R.drawable.menu_math_kids_logo1,
+        title = "Matemáticas",
+        description = "math"
+    )
+    Spacer(modifier = Modifier.height(24.dp))
+    CardWithImageAndTextMedium(
+        imageResId = R.drawable.menu_geography_kids_logo1,
+        title = "Geografía",
+        description = "geo"
+    )
 }
 
 
@@ -189,11 +230,15 @@ fun CardGameOptionVertical(
 }
 
 @Composable
-fun CardWithImageAndText(imageResId: Int, title: String, description: String) {
+fun CardWithImageAndTextCompact(
+    imageResId: Int,
+    title: String,
+    description: String
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 150.dp),
+            .padding(horizontal = 40.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation()
     ) {
@@ -212,13 +257,13 @@ fun CardWithImageAndText(imageResId: Int, title: String, description: String) {
                 bitmap = bitmap!!.asImageBitmap(),
                 contentDescription = null,
                 modifier = Modifier
-                    .height(260.dp)
+                    .height(125.dp)
                     .fillMaxWidth()
                     .clip(shape = RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = title,
@@ -226,7 +271,124 @@ fun CardWithImageAndText(imageResId: Int, title: String, description: String) {
                 color = Color.Black
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = description,
+                style = MaterialTheme.typography.body1,
+                color = Color.Gray
+            )
+        }
+    }
+}
+
+    @Composable
+    fun CardWithImageAndTextMedium(
+        imageResId: Int,
+        title: String,
+        description: String
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 150.dp),
+            shape = RoundedCornerShape(8.dp),
+            elevation = CardDefaults.cardElevation()
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+
+                val resources = LocalContext.current.resources
+                val bitmap by rememberSaveable {
+                    mutableStateOf(
+                        BitmapFactory
+                            .decodeResource(resources, imageResId)
+                    )
+                }
+                Image(
+                    //painter = painterResource(id = imageResId),
+                    //painter = painterResource(id = imageResId),
+                    bitmap = bitmap!!.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(175.dp)
+                        .fillMaxWidth()
+                        .clip(shape = RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.h6,
+                    color = Color.Black
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.body1,
+                    color = Color.Gray
+                )
+            }
+        }
+    }
+
+@Composable
+fun CardWithImageAndTextExpanded(
+    imageResId: Int,
+    title: String,
+    description: String,
+    windowSize: WindowSize
+) {
+
+    when (windowSize) {
+        WindowSize.Compact -> 150.dp
+        WindowSize.Medium -> 260.dp
+        WindowSize.Expanded -> 360.dp
+    }
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 40.dp),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+
+            val resources = LocalContext.current.resources
+            val bitmap by rememberSaveable {
+                mutableStateOf(
+                    BitmapFactory
+                        .decodeResource(resources, imageResId)
+                )
+            }
+            Image(
+                //painter = painterResource(id = imageResId),
+                //painter = painterResource(id = imageResId),
+                bitmap = bitmap!!.asImageBitmap(),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(125.dp)
+                    .fillMaxWidth()
+                    .clip(shape = RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.h6,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = description,
