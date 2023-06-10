@@ -30,6 +30,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.currentCompositionLocalContext
@@ -60,7 +61,13 @@ import com.delarochaf.tablasygeo.ui.theme.TablasygeoTheme
 @Composable
 fun MenuPrincipal(navController: NavController){
     TablasygeoTheme() {
-        MenuJuego(navController)
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = colorResource(id = R.color.green_chalkboard)
+        ){
+            MenuJuego(navController)
+        }
+
     }
 }
 
@@ -73,13 +80,12 @@ fun MenuJuego(navController: NavController){
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.green_chalkboard))
     ) {
         Text(
             text = "Juegos",
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(12.dp, 100.dp),
+                .padding(12.dp, 50.dp),
             color = Color.White,
             fontSize = 40.sp
         )
@@ -130,7 +136,7 @@ fun CardGameOptionHorizontal(
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .size(65.dp)
+                    .size(45.dp)
 
             )
             Spacer(modifier = Modifier.padding(4.dp))
@@ -167,8 +173,8 @@ fun CardGameOptionVertical(
                 Image(
                     painter= painterRes,
                     contentDescription = category,
-                    contentScale = ContentScale.FillHeight,
-                    modifier = Modifier.size(405.dp,200.dp)
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.size(205.dp,100.dp)
                 )
             }
             Column(modifier = Modifier
@@ -193,7 +199,7 @@ fun CardWithImageAndText(imageResId: Int, title: String, description: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 150.dp),
+            .padding(horizontal = 100.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation()
     ) {
@@ -212,7 +218,7 @@ fun CardWithImageAndText(imageResId: Int, title: String, description: String) {
                 bitmap = bitmap!!.asImageBitmap(),
                 contentDescription = null,
                 modifier = Modifier
-                    .height(260.dp)
+                    .height(160.dp)
                     .fillMaxWidth()
                     .clip(shape = RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop

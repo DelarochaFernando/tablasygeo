@@ -1,5 +1,6 @@
 package com.delarochaf.tablasygeo.splashscreen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -44,6 +45,7 @@ fun splashScreenPreview(){
     //simpleSplashScreen(navController = nav)
 }
 
+
 @Composable
 fun simpleSplashScreen(navController: NavController){
     var showPermissionsReqScreen by rememberSaveable{ mutableStateOf(false)}
@@ -63,7 +65,7 @@ fun simpleSplashScreen(navController: NavController){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val imgresource : Painter = painterResource(id = R.drawable.logotabygeotemporal)
+        val imgresource : Painter = painterResource(id = R.drawable.logotabygeotemporal);
 
             if(!showPermissionsReqScreen){
                 Image(
