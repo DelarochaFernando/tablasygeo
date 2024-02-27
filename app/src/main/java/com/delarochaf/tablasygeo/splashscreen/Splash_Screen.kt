@@ -35,9 +35,10 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun Splash_Screen(navController : NavController){
-    TablasygeoTheme() {
+    /*TablasygeoTheme() {
         simpleSplashScreen(navController)
-    }
+    }*/
+    simpleSplashScreen(navController = navController, onTimeOut = {})
 }
 
 //@Preview(showSystemUi = true, showBackground = true)
@@ -47,43 +48,29 @@ fun splashScreenPreview(){
 }
 
 @Composable
-fun simpleSplashScreen(navController: NavController){
-    var showPermissionsReqScreen by rememberSaveable{ mutableStateOf(false)}
-    var showSplashScreen by rememberSaveable { mutableStateOf(true)}
+fun simpleSplashScreen(navController: NavController, onTimeOut:() -> Unit){
 
-    if(!showPermissionsReqScreen){
-        LaunchedEffect(showSplashScreen){
-            delay(3500)
-            showPermissionsReqScreen = true
-        }
+    val currentOnTimeOut by rememberUpdatedState(onTimeOut)
+
+    LaunchedEffect(Unit){
+        delay(2500)
+        currentOnTimeOut()
     }
-
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
+            .fillMaxSize(),
+            //.background(Color.White),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val imgresource : Painter = painterResource(id = R.drawable.logotabygeotemporal)
 
-            if(!showPermissionsReqScreen){
-                Image(
-                    painter = imgresource, contentDescription = "LogoApp",
-                    modifier = Modifier
-                        .width(150.dp)
-                        .height(150.dp)
-                )
-            }else{
-                PermissionRequestScreen(permissionGranted = {
-                    if(it){
-                        navController.navigate("menuprincipal")
-                    }
-                })
-            }
+        Image(painter = imgresource, contentDescription = "LogoApp",
+            modifier = Modifier
+                .width(150.dp)
+                .height(150.dp)
+        )
     }
-
-
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -91,7 +78,7 @@ fun simpleSplashScreen(navController: NavController){
 fun PermissionRequestScreen(permissionGranted: (Boolean) -> Unit){
     val imgInternetPermission : Painter = painterResource(id = R.drawable.ic_internet_permission_light)
     val imgLocationPermission : Painter = painterResource(id = R.drawable.ic_location_permission_light)
-    var isPermissionGranted by rememberSaveable() { mutableStateOf(false) }
+    var isPermissionGranted by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -156,6 +143,7 @@ fun PermissionRequestScreen(permissionGranted: (Boolean) -> Unit){
                 multiplePermissionsState = permissionsState,
             ) {
                 permissionGranted(it)
+                //isPermissionGranted = false
             }
 
             Button(onClick = {permissionsState.launchMultiplePermissionRequest()},

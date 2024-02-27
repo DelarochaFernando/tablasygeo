@@ -2,17 +2,17 @@ package com.delarochaf.tablasygeo.menuprincipal
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Resources
+import android.content.Intent
 import android.graphics.BitmapFactory
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,20 +20,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -41,27 +36,51 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.delarochaf.tablasygeo.R
-import com.delarochaf.tablasygeo.ui.theme.TablasygeoTheme
+import com.delarochaf.tablasygeo.subcategoriajuego.launchSubCategoriaJuegoActivity
 import com.delarochaf.tablasygeo.windowsize.WindowSize
+import com.delarochaf.tablasygeo.windowsize.rememberWindowSizeClass
+import dagger.hilt.android.AndroidEntryPoint
 
+
+fun launchMenuPrincipalActivity(context: Context,
+                                navController: NavController){
+
+    var intent = Intent(context,MenuPrincipalActivity::class.java)
+    val bundle = Bundle()
+    //bundle.putSerializable("navCont",navController)
+    //intent.putExtras(bundle)
+    context.startActivity(intent)
+}
+
+
+@AndroidEntryPoint
+class MenuPrincipalActivity : ComponentActivity(){
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            val navController = rememberNavController()
+            val windowSize = rememberWindowSizeClass()
+            MenuPrincipal(navController = navController, windowSize = windowSize)
+        }
+    }
+}
 @Composable
 fun MenuPrincipal(navController: NavController, windowSize: WindowSize){
-    TablasygeoTheme() {
+   /* TablasygeoTheme() {
+        Surface(color = Color(R.color.green_chalkboard)) {
+            MenuJuego(navController,windowSize)
+        }
+    }*/
+    Surface(color = Color(0xFF1B5E20)) {
         MenuJuego(navController,windowSize)
     }
 }
@@ -71,11 +90,11 @@ fun MenuPrincipal(navController: NavController, windowSize: WindowSize){
 @Composable
 fun MenuJuego(navController: NavController, windowSize: WindowSize){
     val geoImg = painterResource(id = R.drawable.menu_geography_kids_logo1)
-    val mathImg = painterResource(id = R.drawable.menu_math_kids_logo1)
+    val mathImg = painterResource(id = R.drawable.menu_math_kids_logo3)
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.green_chalkboard))
+            //.background(color = colorResource(id = R.color.green_chalkboard))
     ) {
         Text(
             text = "Juegos",
@@ -102,7 +121,16 @@ fun MenuJuego(navController: NavController, windowSize: WindowSize){
             WindowSize.Compact ->
             CardsForCompactWidthDevice()
             WindowSize.Medium ->
-            CardsForMediumWidthDevice()
+            CardsForMediumWidthDevice(onCardClick = {
+                //launchCategoriaJuegoActivity
+                when(it){
+                   0 -> launchSubCategoriaJuegoActivity(navController.context,navController,it)
+                   1 -> launchSubCategoriaJuegoActivity(navController.context,navController,it)
+                   else -> {
+
+                    }//launchSubCategoriaJuegoActivity()
+                }
+            })
             WindowSize.Expanded ->
                 CardWithImageAndTextExpanded(
                     imageResId = R.drawable.menu_math_kids_logo1,
@@ -132,17 +160,19 @@ fun CardsForCompactWidthDevice(){
 }
 
 @Composable
-fun CardsForMediumWidthDevice(){
+fun CardsForMediumWidthDevice(onCardClick: (Int) -> Unit){
     CardWithImageAndTextMedium(
-        imageResId = R.drawable.menu_math_kids_logo1,
+        imageResId = R.drawable.menu_math_kids_logo3,
         title = "Matemáticas",
-        description = "math"
+        description = "math",
+        onCardClick(0)
     )
     Spacer(modifier = Modifier.height(24.dp))
     CardWithImageAndTextMedium(
-        imageResId = R.drawable.menu_geography_kids_logo1,
+        imageResId = R.drawable.menu_logo_geo_kids2,
         title = "Geografía",
-        description = "geo"
+        description = "geo",
+        onCardClick(1)
     )
 }
 
@@ -231,7 +261,7 @@ fun CardGameOptionVertical(
 
 @Composable
 fun CardWithImageAndTextCompact(
-    imageResId: Int,
+    @DrawableRes imageResId: Int,
     title: String,
     description: String
 ) {
@@ -252,10 +282,10 @@ fun CardWithImageAndTextCompact(
                     .decodeResource(resources,imageResId))
             }
             Image(
-                //painter = painterResource(id = imageResId),
-                //painter = painterResource(id = imageResId),
-                bitmap = bitmap!!.asImageBitmap(),
-                contentDescription = null,
+                painter = painterResource(id = imageResId),
+                //painter = painterResource(id = R.drawable.menu_math_kids_logo3),
+                //bitmap = bitmap!!.asImageBitmap(),
+                contentDescription = "image",
                 modifier = Modifier
                     .height(125.dp)
                     .fillMaxWidth()
@@ -282,17 +312,20 @@ fun CardWithImageAndTextCompact(
     }
 }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun CardWithImageAndTextMedium(
-        imageResId: Int,
+        @DrawableRes imageResId: Int,
         title: String,
-        description: String
+        description: String,
+        onCardClick: Unit
     ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 150.dp),
             shape = RoundedCornerShape(8.dp),
+            onClick = {onCardClick},
             elevation = CardDefaults.cardElevation()
         ) {
             Column(
@@ -307,10 +340,10 @@ fun CardWithImageAndTextCompact(
                     )
                 }
                 Image(
-                    //painter = painterResource(id = imageResId),
-                    //painter = painterResource(id = imageResId),
-                    bitmap = bitmap!!.asImageBitmap(),
-                    contentDescription = null,
+                    //painter = painterResource(id = R.drawable.menu_math_kids_logo3),
+                    painter = painterResource(id = imageResId),
+                    //bitmap = bitmap!!.asImageBitmap(),
+                    contentDescription = "image",
                     modifier = Modifier
                         .height(175.dp)
                         .fillMaxWidth()
@@ -361,23 +394,25 @@ fun CardWithImageAndTextExpanded(
             modifier = Modifier.padding(16.dp)
         ) {
 
-            val resources = LocalContext.current.resources
-            val bitmap by rememberSaveable {
-                mutableStateOf(
-                    BitmapFactory
-                        .decodeResource(resources, imageResId)
-                )
-            }
+//            val resources = LocalContext.current.resources
+//            val bitmap by rememberSaveable {
+//                mutableStateOf(
+//                    BitmapFactory
+//                        .decodeResource(resources, imageResId)
+//                )
+//            }
+
+            var imgRes : Painter = painterResource(id = R.drawable.logotabygeotemporal)
             Image(
+                painter = imgRes,
                 //painter = painterResource(id = imageResId),
-                //painter = painterResource(id = imageResId),
-                bitmap = bitmap!!.asImageBitmap(),
+                //bitmap = bitmap!!.asImageBitmap(),
                 contentDescription = null,
                 modifier = Modifier
                     .height(125.dp)
                     .fillMaxWidth()
                     .clip(shape = RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Inside
             )
 
             Spacer(modifier = Modifier.height(4.dp))
