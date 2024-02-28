@@ -32,6 +32,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun Splash_Screen(navController : NavController){
@@ -48,13 +49,13 @@ fun splashScreenPreview(){
 
 @Composable
 fun simpleSplashScreen(navController: NavController){
-    var showPermissionsReqScreen by rememberSaveable{ mutableStateOf(false)}
-    var showSplashScreen by rememberSaveable { mutableStateOf(true)}
+    var showPermissionsReqScreen by rememberSaveable{ mutableStateOf(true)}
+    //var showSplashScreen by rememberSaveable { mutableStateOf(true)}
 
-    if(!showPermissionsReqScreen){
-        LaunchedEffect(showSplashScreen){
+    if(showPermissionsReqScreen){
+        LaunchedEffect(Unit){
             delay(3500)
-            showPermissionsReqScreen = true
+            showPermissionsReqScreen = false
         }
     }
 
@@ -67,7 +68,7 @@ fun simpleSplashScreen(navController: NavController){
     ) {
         val imgresource : Painter = painterResource(id = R.drawable.logotabygeotemporal)
 
-            if(!showPermissionsReqScreen){
+            if(showPermissionsReqScreen){
                 Image(
                     painter = imgresource, contentDescription = "LogoApp",
                     modifier = Modifier
@@ -75,9 +76,12 @@ fun simpleSplashScreen(navController: NavController){
                         .height(150.dp)
                 )
             }else{
+                val scope = rememberCoroutineScope()
                 PermissionRequestScreen(permissionGranted = {
                     if(it){
-                        navController.navigate("menuprincipal")
+                        scope.launch {
+                            navController.navigate("menuprincipal")
+                        }
                     }
                 })
             }
