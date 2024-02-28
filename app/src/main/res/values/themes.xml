@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Tablasygeo" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:statusBarColor">@color/purple_700</item>
+    <style name="Theme.Tablasygeo" parent="Theme.MaterialComponents.Light.NoActionBar"> <!--parent="Theme.Material3.DayNight.NoActionBar"-->
+        <item name="android:statusBarColor">@color/green_chalkboard</item>
+        <item name="android:background">@color/green_chalkboard</item>
+        <item name="android:windowBackground">@color/green_chalkboard</item>
     </style>
 </resources>
