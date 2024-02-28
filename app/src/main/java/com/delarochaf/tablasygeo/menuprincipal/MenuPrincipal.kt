@@ -91,6 +91,7 @@ fun MenuPrincipal(navController: NavController, windowSize: WindowSize){
 fun MenuJuego(navController: NavController, windowSize: WindowSize){
     val geoImg = painterResource(id = R.drawable.menu_geography_kids_logo1)
     val mathImg = painterResource(id = R.drawable.menu_math_kids_logo3)
+    var titleCard = ""
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -121,14 +122,17 @@ fun MenuJuego(navController: NavController, windowSize: WindowSize){
             WindowSize.Compact ->
             CardsForCompactWidthDevice()
             WindowSize.Medium ->
-            CardsForMediumWidthDevice(onCardClick = {
-                //launchCategoriaJuegoActivity
-                when(it){
-                   0 -> launchSubCategoriaJuegoActivity(navController.context,navController,it)
-                   1 -> launchSubCategoriaJuegoActivity(navController.context,navController,it)
-                   else -> {
-
-                    }//launchSubCategoriaJuegoActivity()
+            CardsForMediumWidthDevice(onEachCardClicked = {
+               titleCard = it
+            }, onCardClick = {
+                if(it){
+                    if(titleCard.equals("Matemáticas")){
+                        //Matemáticas
+                        launchSubCategoriaJuegoActivity(navController.context,navController,0)
+                    }else if(titleCard.equals("Geografía")){
+                        //Geografía
+                        launchSubCategoriaJuegoActivity(navController.context,navController,1)
+                    }
                 }
             })
             WindowSize.Expanded ->
@@ -137,6 +141,8 @@ fun MenuJuego(navController: NavController, windowSize: WindowSize){
                     title = "Matemáticas",
                     description = "math",windowSize
                 )
+
+            else -> {}
         }
     }
 
@@ -160,21 +166,26 @@ fun CardsForCompactWidthDevice(){
 }
 
 @Composable
-fun CardsForMediumWidthDevice(onCardClick: (Int) -> Unit){
+fun CardsForMediumWidthDevice(onEachCardClicked: (String) -> Unit,
+                              onCardClick: (Boolean) -> Unit){
     CardWithImageAndTextMedium(
         imageResId = R.drawable.menu_math_kids_logo3,
         title = "Matemáticas",
         description = "math",
-        onCardClick(0)
+        onCardClick,
+        onEachCardClicked
     )
     Spacer(modifier = Modifier.height(24.dp))
     CardWithImageAndTextMedium(
         imageResId = R.drawable.menu_logo_geo_kids2,
         title = "Geografía",
         description = "geo",
-        onCardClick(1)
+        onCardClick,
+        onEachCardClicked
     )
 }
+
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -318,14 +329,18 @@ fun CardWithImageAndTextCompact(
         @DrawableRes imageResId: Int,
         title: String,
         description: String,
-        onCardClick: Unit
+        onCardClick:(Boolean) -> Unit,
+        onEachCardClicked: (String) -> Unit
     ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 150.dp),
             shape = RoundedCornerShape(8.dp),
-            onClick = {onCardClick},
+            onClick = {
+                onCardClick(true)
+                onEachCardClicked(title)
+                      },
             elevation = CardDefaults.cardElevation()
         ) {
             Column(
