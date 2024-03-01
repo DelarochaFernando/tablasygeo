@@ -338,8 +338,8 @@ fun CardWithImageAndTextCompact(
                 .padding(horizontal = 150.dp),
             shape = RoundedCornerShape(8.dp),
             onClick = {
-                onCardClick(true)
                 onEachCardClicked(title)
+                onCardClick(true)
                       },
             elevation = CardDefaults.cardElevation()
         ) {
@@ -448,4 +448,6 @@ fun CardWithImageAndTextExpanded(
         }
     }
 }
+
+//data class
 
