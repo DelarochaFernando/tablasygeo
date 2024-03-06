@@ -2,37 +2,61 @@ package com.delarochaf.tablasygeo.subcategoriajuego
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.delarochaf.tablasygeo.R
+import com.delarochaf.tablasygeo.imagegenerator.ImageGenerator
 import com.delarochaf.tablasygeo.menuprincipal.MenuJuego
 import com.delarochaf.tablasygeo.menuprincipal.MenuPrincipalActivity
+import com.delarochaf.tablasygeo.ui.theme.chalkboardGreen
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -42,7 +66,6 @@ fun launchSubCategoriaJuegoActivity(context: Context,
 ){
 
     var intent = Intent(context, SubCategoriaJuegoActivity::class.java)
-    val bundle = Bundle()
     intent.putExtra("idSubCategoria",idSubCat)
     context.startActivity(intent)
 }
@@ -54,7 +77,6 @@ class SubCategoriaJuegoActivity : ComponentActivity(){
         super.onCreate(savedInstanceState)
         val idSubCat = intent.extras?.get("idSubCategoria")
         setContent {
-
             when(idSubCat){
                 0 -> SubCategoriaScreen("Matemáticas")
                 1 -> SubCategoriaScreen("Geografía")
@@ -62,7 +84,6 @@ class SubCategoriaJuegoActivity : ComponentActivity(){
 
                 }
             }
-
         }
     }
 }
@@ -84,29 +105,94 @@ fun SubCategoriaScreen(subcategoria : String){
             Text(
                 text = text,
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(12.dp, 40.dp),
+                    .align(Alignment.CenterHorizontally),
                 color = Color.White,
                 fontSize = 40.sp
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             when(idSubCat){
-                0-> SubCategoriaMatematicasContent()
+                0-> SubCategoriaMatematicasContent(modifier = Modifier)
                 1 -> SubCategoriaGeografiaContent()
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SubCategoriaMatematicasContent(){
-    //LazyColumn(content = )
+fun SubCategoriaMatematicasContent(modifier: Modifier,
+                                   viewModel: SubCategoriaJuegoViewModel = SubCategoriaJuegoViewModel(
+                                       LocalContext.current),
+                                   lazygridstate : LazyGridState =  rememberLazyGridState()
+){
+
+    //viewModel.creatListOfMatematicasItems()
+    val listItemsMathContent by viewModel.listItemsMathContent.collectAsStateWithLifecycle()
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().padding(200.dp,12.dp),
+        verticalArrangement = Arrangement.Center,
+        state = rememberLazyListState()
+    ){
+        items(listItemsMathContent){MathContentItem ->
+            Box(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxSize()
+                    .background(Color.Yellow),
+                contentAlignment = Alignment.Center
+            ) {
+                MatematicasItem(modifier = modifier, subCatJuegoModel = MathContentItem)
+            }
+        }
+    }
+
+    /*LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = modifier.padding(8.dp)
+        ){
+        items(listItemsMathContent){MathContentItem ->
+            Box(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxSize()
+                    .background(Color.Yellow),
+                contentAlignment = Alignment.Center
+            ) {
+                MatematicasItem(modifier = modifier, subCatJuegoModel = MathContentItem)
+            }
+        }
+    }*/
 }
 @Composable
 fun SubCategoriaGeografiaContent(){
 
 }
 
+
+@Composable
+fun MatematicasItem(modifier : Modifier, subCatJuegoModel: SubCatJuegoModel){
+    Card(
+        modifier = Modifier.fillMaxSize().padding(2.dp),
+        shape = RoundedCornerShape(4.dp),
+        elevation = 4.dp,
+        backgroundColor = Color(LocalContext.current.resources.getColor(R.color.green_chalkboard))
+    ) {
+        Column(modifier = Modifier.padding(8.dp)) {
+            Image(bitmap = subCatJuegoModel.bitmap.asImageBitmap(),
+                contentDescription = subCatJuegoModel.nombreOperacion
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally),
+                text = subCatJuegoModel.nombreOperacion,
+                style = MaterialTheme.typography.h6,
+                color = Color.White
+            )
+        }
+    }
+}
 
 @Composable
 @Preview
@@ -116,7 +202,7 @@ fun MatematicasItemPreview(){
         elevation = 4.dp
     ) {
         Column() {
-            Image(painter = , contentDescription = )
+            //Image(bitmap = , contentDescription = )
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(

@@ -12,8 +12,8 @@ object ImageGenerator {
 
     fun generateTizaImage(context: Context, operationString: String):Bitmap {
         // Tamaño de la imagen
-        val width = 300
-        val height = 100
+        val width = 400
+        val height = 200
 
         // Crear un Bitmap y un lienzo
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
@@ -31,9 +31,10 @@ object ImageGenerator {
         // Pintar el texto de la operación matemática
         val textoPaint = Paint().apply {
             color = Color.WHITE
-            textSize = 30f
+            textSize = 55f
         }
-        canvas.drawText(operationString, 20f, 50f, textoPaint)
+        canvas.drawText(operationString, 110f, 120f, textoPaint)
+
 
         return bitmap
     }
