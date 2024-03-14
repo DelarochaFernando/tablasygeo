@@ -50,6 +50,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.delarochaf.tablasygeo.R
@@ -105,11 +106,11 @@ fun SubCategoriaScreen(subcategoria : String){
             Text(
                 text = text,
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally),
+                    .align(Alignment.CenterHorizontally)
+                    .padding(0.dp,30.dp),
                 color = Color.White,
-                fontSize = 40.sp
+                fontSize = 60.sp
             )
-            Spacer(modifier = Modifier.height(12.dp))
             when(idSubCat){
                 0-> SubCategoriaMatematicasContent(modifier = Modifier)
                 1 -> SubCategoriaGeografiaContent()
@@ -121,17 +122,23 @@ fun SubCategoriaScreen(subcategoria : String){
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SubCategoriaMatematicasContent(modifier: Modifier,
-                                   viewModel: SubCategoriaJuegoViewModel = SubCategoriaJuegoViewModel(
-                                       LocalContext.current),
-                                   lazygridstate : LazyGridState =  rememberLazyGridState()
+ viewModel: SubCategoriaJuegoViewModel = SubCategoriaJuegoViewModel(
+ LocalContext.current),lazygridstate : LazyGridState =  rememberLazyGridState()
 ){
 
     //viewModel.creatListOfMatematicasItems()
     val listItemsMathContent by viewModel.listItemsMathContent.collectAsStateWithLifecycle()
 
+ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+    val lazyCol = createRef()
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(200.dp,12.dp),
-        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .constrainAs(lazyCol,{
+                top.linkTo(parent.top, margin = 40.dp)
+            })
+            .fillMaxSize()
+            .padding(200.dp, 0.dp),
+        //verticalArrangement = Arrangement.Center,
         state = rememberLazyListState()
     ){
         items(listItemsMathContent){MathContentItem ->
@@ -146,6 +153,7 @@ fun SubCategoriaMatematicasContent(modifier: Modifier,
             }
         }
     }
+}
 
     /*LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -173,7 +181,9 @@ fun SubCategoriaGeografiaContent(){
 @Composable
 fun MatematicasItem(modifier : Modifier, subCatJuegoModel: SubCatJuegoModel){
     Card(
-        modifier = Modifier.fillMaxSize().padding(2.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(2.dp),
         shape = RoundedCornerShape(4.dp),
         elevation = 4.dp,
         backgroundColor = Color(LocalContext.current.resources.getColor(R.color.green_chalkboard))
